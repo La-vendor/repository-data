@@ -13,18 +13,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/repository")
 public class RepoDataController {
 
-    private final RepoDataService repoDataService;
+    private final GitHubService gitHubService;
 
     @GetMapping("{author}/{repository-name}")
-    public ResponseEntity<RepoData> getRepositoryData(@PathVariable("author") String author,
+    public ResponseEntity<?> getRepositoryData(@PathVariable("author") String author,
                                                       @PathVariable("repository-name") String repositoryName) {
 
-        RepoData repoData = repoDataService.getRepositoryDataBy(author, repositoryName);
+        RepoData repoData = gitHubService.getRepoData(author, repositoryName);
 
         if(repoData != null){
             return ResponseEntity.ok(repoData);
         }else{
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            String errorMessage = "Repository not found: " + author + "/" + repositoryName;
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+
         }
     }
 }
